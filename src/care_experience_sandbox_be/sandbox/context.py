@@ -66,6 +66,9 @@ def sandbox_context(actor_user=None, base_cls: type[CareFixtureBase] = CareFixtu
 
             actor = _resolve_actor(actor_user)
             client = APIClient()
+            # Seed over https so SECURE_SSL_REDIRECT doesn't 301 the requests.
+            client.defaults["wsgi.url_scheme"] = "https"
+            client.defaults["SERVER_PORT"] = "443"
             client.force_authenticate(user=actor)
 
             fixture_base = base_cls(client)
