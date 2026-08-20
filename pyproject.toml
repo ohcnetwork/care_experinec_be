@@ -1,6 +1,6 @@
 [project]
 name = "care_experience_sandbox_be"
-version = "0.1.0"
+version = "0.1.1"
 description = "Django plugin for ohcnetwork/care."
 readme = "README.md"
 authors = [
