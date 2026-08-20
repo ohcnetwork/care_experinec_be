@@ -29,6 +29,14 @@ class _NoOpLock:
         pass
 
 
+class _SecureAPIClient(APIClient):
+    """Force every request to be treated as HTTPS so SECURE_SSL_REDIRECT won't 301."""
+
+    def generic(self, method, path, *args, **kwargs):
+        kwargs["secure"] = True
+        return super().generic(method, path, *args, **kwargs)
+
+
 def _resolve_actor(actor_user):
     """Seed as the authorized caller; fall back to any superuser if unset."""
     if actor_user is not None and actor_user.is_superuser:
@@ -65,10 +73,7 @@ def sandbox_context(actor_user=None, base_cls: type[CareFixtureBase] = CareFixtu
             )
 
             actor = _resolve_actor(actor_user)
-            client = APIClient()
-            # Seed over https so SECURE_SSL_REDIRECT doesn't 301 the requests.
-            client.defaults["wsgi.url_scheme"] = "https"
-            client.defaults["SERVER_PORT"] = "443"
+            client = _SecureAPIClient()
             client.force_authenticate(user=actor)
 
             fixture_base = base_cls(client)
