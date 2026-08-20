@@ -17,6 +17,7 @@ dependencies = [
     "django",
     "celery",
     "djangorestframework",
+    "faker"
 ]
 requires-python = ">= 3.10"
 
