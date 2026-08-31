@@ -22,11 +22,8 @@ class SeedWithDemoPackTests(TestCase):
                 return_value=run,
             ) as seed_fn,
             patch(
-                "care_demo_facility_setup.services.sandbox_attach.summarize_seed_run",
-                return_value={
-                    "_meta": {"seed_run_id": "run-1"},
-                    "patients": 10,
-                },
+                "care_demo_facility_setup.services.sandbox_attach.summarize_seed_run_counts",
+                return_value={"patients": 10},
             ) as summarize,
         ):
             loaded = _seed_with_demo_pack(
@@ -42,7 +39,7 @@ class SeedWithDemoPackTests(TestCase):
             pack_slug=DEFAULT_DEMO_PACK_SLUG,
         )
         summarize.assert_called_once_with(run)
-        self.assertEqual(loaded["_meta"]["seed_run_id"], "run-1")
+        self.assertNotIn("_meta", loaded)
         self.assertEqual(loaded["patients"], 10)
 
     def test_clear_error_when_demo_plugin_missing(self):
@@ -137,7 +134,7 @@ class BuildSandboxEmptyPathTests(TestCase):
 
         with patch(
             "care_experience_sandbox_be.sandbox.builder._seed_with_demo_pack",
-            return_value={"_meta": {"seed_run_id": "r1"}, "patients": 10},
+            return_value={"patients": 10},
         ) as seed:
             result = build_sandbox(
                 base,
@@ -148,6 +145,6 @@ class BuildSandboxEmptyPathTests(TestCase):
             )
 
         seed.assert_called_once_with("fac-1", "dist-1", base.user)
-        self.assertEqual(result["loaded_data"]["_meta"]["seed_run_id"], "r1")
+        self.assertNotIn("_meta", result["loaded_data"])
         self.assertEqual(result["loaded_data"]["patients"], 10)
         self.assertEqual(len(result["users"]), 7)

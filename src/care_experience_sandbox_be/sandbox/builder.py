@@ -46,7 +46,7 @@ def _seed_with_demo_pack(facility_id, district_id, requested_by):
     try:
         from care_demo_facility_setup.services.sandbox_attach import (
             seed_existing_facility,
-            summarize_seed_run,
+            summarize_seed_run_counts,
         )
     except ImportError as exc:
         msg = (
@@ -61,7 +61,7 @@ def _seed_with_demo_pack(facility_id, district_id, requested_by):
         requested_by=requested_by,
         pack_slug=DEFAULT_DEMO_PACK_SLUG,
     )
-    return summarize_seed_run(run)
+    return summarize_seed_run_counts(run)
 
 
 def build_sandbox(base, sandbox_id, is_facility_empty, facility_name="", server_url=""):
